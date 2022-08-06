@@ -12,7 +12,7 @@ public class PongGame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-        BasicsPanel Panel = new BasicsPanel(1000, 770);
+        BasicsPanel Panel = new BasicsPanel(1000, 810);
         frame.add(Panel);
         frame.setVisible(true);
         Panel.setup();

@@ -117,9 +117,7 @@ public class mainMenu implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-        Point p = e.getPoint();
+            Point p = e.getPoint();
         if (playBtn.contains(p)) {
             active = false;
             font = new Font("Menlo", Font.PLAIN, 20);

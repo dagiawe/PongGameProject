@@ -23,11 +23,7 @@ public class BasicsPanel extends JPanel {
     public Graphics rasterGraphics;
 
 
-    //set up the graphics
-    public void setup() {
-        Buffer = this.createImage(1000, 770);
-        rasterGraphics = Buffer.getGraphics();
-    }
+
 
     //constructor for the panel
     public BasicsPanel(int w, int h) {
@@ -36,33 +32,39 @@ public class BasicsPanel extends JPanel {
         menu = new mainMenu(this);
     }
 
+    //set up the graphics
+    public void setup() {
+        Buffer = this.createImage(width, height);
+        rasterGraphics = Buffer.getGraphics();
+    }
+
     //Method to draw or to perform the game
     public void draw() throws InterruptedException {
 
         long delta = 0;//a filed to see the seconds and generate the ball every 15 seconds
 
         //ArrayList for the balls with one ball for now
-        ArrayList<MultiballWithCollision> multiballs = new ArrayList<MultiballWithCollision>();
+        ArrayList<MultiballWithCollision> multiballs = new ArrayList<>();
         multiballs.add(new MultiballWithCollision(500, 360, 2.0f, 1.6f, Color.red));
 
         //ArrayList for the boxes of the player
-        ArrayList<BoxWithCollision> multibox = new ArrayList<BoxWithCollision>();
-        multibox.add(new BoxWithCollision(10, 20, 50, 90, Color.red));
-        multibox.add(new BoxWithCollision(10, 140, 50, 90, Color.red));
-        multibox.add(new BoxWithCollision(10, 260, 50, 90, Color.red));
-        multibox.add(new BoxWithCollision(10, 380, 50, 90, Color.red));
-        multibox.add(new BoxWithCollision(10, 500, 50, 90, Color.red));
-        multibox.add(new BoxWithCollision(10, 620, 50, 90, Color.red));
+        ArrayList<BoxWithCollision> multibox = new ArrayList<>();
+        multibox.add(new BoxWithCollision(10, 10, 50, 90, Color.red));
+        multibox.add(new BoxWithCollision(10, 120, 50, 90, Color.red));
+        multibox.add(new BoxWithCollision(10, 240, 50, 90, Color.red));
+        multibox.add(new BoxWithCollision(10, 360, 50, 90, Color.red));
+        multibox.add(new BoxWithCollision(10, 480, 50, 90, Color.red));
+        multibox.add(new BoxWithCollision(10, 600, 50, 90, Color.red));
 
 
         //ArrayList for the boxes of the AI player
-        ArrayList<BoxWithCollision> multibox2 = new ArrayList<BoxWithCollision>();
-        multibox2.add(new BoxWithCollision(930, 20, 50, 90, Color.blue));
-        multibox2.add(new BoxWithCollision(930, 140, 50, 90, Color.blue));
-        multibox2.add(new BoxWithCollision(930, 260, 50, 90, Color.blue));
-        multibox2.add(new BoxWithCollision(930, 380, 50, 90, Color.blue));
-        multibox2.add(new BoxWithCollision(930, 500, 50, 90, Color.blue));
-        multibox2.add(new BoxWithCollision(930, 620, 50, 90, Color.blue));
+        ArrayList<BoxWithCollision> multibox2 = new ArrayList<>();
+        multibox2.add(new BoxWithCollision(930, 10, 50, 90, Color.blue));
+        multibox2.add(new BoxWithCollision(930, 120, 50, 90, Color.blue));
+        multibox2.add(new BoxWithCollision(930, 240, 50, 90, Color.blue));
+        multibox2.add(new BoxWithCollision(930, 360, 50, 90, Color.blue));
+        multibox2.add(new BoxWithCollision(930, 480, 50, 90, Color.blue));
+        multibox2.add(new BoxWithCollision(930, 600, 50, 90, Color.blue));
 
         //ArrayList for the boxes of the pedal for both the player and the Ai
         ArrayList<Paddle> paddles = new ArrayList<>(Arrays.asList(new playerPaddle(120, 220, 50, 300, Color.red), new aiPaddle(820, 220, 50, 300, Color.blue)));
@@ -121,19 +123,17 @@ public class BasicsPanel extends JPanel {
             }
 
 
-            //drawing the boxes left and right (scoring boxes
-            for (BoxWithCollision B : multibox) {
-                B.DrawBox(rasterGraphics);
-                if (multibox.size() < 6) {
-                    MovingScoringBoxes(multibox);//moves the scoring boxes
-                }
-            }
-            for (BoxWithCollision B : multibox2) {
-                B.DrawBox(rasterGraphics);
-                if (multibox2.size() < 6) {
-                    MovingScoringBoxes(multibox2);//moves the scoring boxes
-                }
-            }
+           //drawing the boxes left and right (scoring boxes
+           for (BoxWithCollision B : multibox) {
+               B.DrawBox(rasterGraphics);
+               B.Movebox();
+
+           }
+           for (BoxWithCollision B : multibox2) {
+               B.DrawBox(rasterGraphics);
+              B.Movebox();
+
+           }
 
             for (MultiballWithCollision b : multiballs) {
                 b.DrawBall(rasterGraphics);//drawing the balls
@@ -146,6 +146,10 @@ public class BasicsPanel extends JPanel {
                     if (B.equals(getobj()))//checking the box
                     {
                         iterator.remove();//removing
+
+                        multibox=MovingBoxes(multibox,multiballs);
+
+
                     }
                 }
                 for (Iterator<BoxWithCollision> iterator = multibox2.iterator(); iterator.hasNext(); ) {
@@ -154,6 +158,8 @@ public class BasicsPanel extends JPanel {
                     if (B.equals(getobj()))//checking the box
                     {
                         iterator.remove();//removing
+                        multibox2= MovingBoxes(multibox2,multiballs);
+
                     }
                 }
             }
@@ -231,9 +237,9 @@ public class BasicsPanel extends JPanel {
                 rasterGraphics.drawString("\nScore", 98, 398);
                 rasterGraphics.setColor(Color.blue);
                 rasterGraphics.drawString("\nScore", 100, 400);
-                rasterGraphics.drawString(":" + String.valueOf(6 - multibox2.size()), 400, 400);
+                rasterGraphics.drawString(":" + (6 - multibox2.size()), 400, 400);
                 rasterGraphics.setColor(Color.blue);
-                rasterGraphics.drawString("   to " + String.valueOf(6 - multibox.size()), 450, 400);
+                rasterGraphics.drawString("   to " + (6 - multibox.size()), 450, 400);
                 getGraphics().drawImage(Buffer, 0, 0, null);
 
                 if (delta >= 1500) {
@@ -246,6 +252,7 @@ public class BasicsPanel extends JPanel {
 
             }
         }
+
 		this.draw(); //redraw and start with the menu again
     }
 
@@ -265,22 +272,51 @@ public class BasicsPanel extends JPanel {
         }
     }
 
-    public void MovingScoringBoxes(ArrayList<BoxWithCollision> multibox) {
+    public ArrayList<BoxWithCollision> MovingBoxes(ArrayList<BoxWithCollision> multibox,ArrayList<MultiballWithCollision> multiballs) {
 
-        for (BoxWithCollision box : multibox) {
-            box.velocity.setY(box.speed);
-
-            if (box.location.getY() + box.hi >= 740 || box.location.getY() <= 0) {
-
-                for (BoxWithCollision b : multibox) {
-                    b.velocity.setY(b.velocity.getY() * -1f);
-                    b.speed *= -1;
+        int y=10;
+        for (BoxWithCollision boxWithCollision : multibox) {
+            if (checkBallsAround(multiballs)) {
+                for (MultiballWithCollision ball : multiballs) {
+                    ball.stop();
                 }
+                boxWithCollision.location.setY(y);
+                for (MultiballWithCollision ball : multiballs) {
+                    ball.play();
+                }
+                y += 120;
+                continue;
             }
-            box.location = box.location.add(box.velocity);
+            boxWithCollision.location.setY(y);
+            y += 120;
         }
 
+        return multibox;
+
+
     }
+    public boolean checkBallsAround(ArrayList<MultiballWithCollision> multiballs)
+    {
+        for(MultiballWithCollision balls : multiballs)
+        {
+            if(balls.position.getX()<120)
+            {
+                System.out.println("------" + balls.position.getX());
+                return true;
+            }
+
+
+            if(balls.position.getX()>820)
+            {
+                System.out.println("..........."+balls.position.getX());
+                return true;
+            }
+            System.out.println(balls.position.getX());
+        }
+        return false;
+    }
+
+
 
     public void MoveBabox(ArrayList<MultiballWithCollision> balls, ArrayList<BoxWithCollision> box) {
         for (BoxWithCollision b : box) {

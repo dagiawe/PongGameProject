@@ -18,11 +18,12 @@ public class BoxWithCollision extends PongGame implements KeyListener {
 
 
     public BoxWithCollision(int x, int y, int xx, int yy, Color color) {
-        speed = 0.3f;
+        speed = 0.5f;
         wi = xx;
         hi = yy;
         location = new Vector2D();
         velocity = new Vector2D();
+        velocity.set(0,2);
         location.set(x, y);
         this.color = color;
     }
@@ -64,57 +65,6 @@ public class BoxWithCollision extends PongGame implements KeyListener {
         }
     }
 
-    //this class is for the collionresolution  of the boxes in far left and right of the game
-    class multibox {
-        public boolean colliding(MultiballWithCollision ball, BoxWithCollision box) {
-            double xc = ball.position.getX();
-            double yc = ball.position.getY();
-            double xd = box.location.getX();
-            double yd = box.location.getY();
-            double xdd = box.location.getX() + box.wi;
-            double ydd = box.location.getY() + box.hi;
-            double zx = clamp(xd, xdd, xc);
-            double zy = clamp(yd, ydd, yc);
-            double le = getLength(xc, yc, zx, zy);
-            if (le < 25) {
-                if (zx == xd && zy == yd) {
-                    ball.Velocity.setY(ball.Velocity.getY() * -5);
-                    ball.Velocity.setX(ball.Velocity.getX() * -5);
-                }
-                if (zx == xdd && zy == ydd) {
-                    ball.Velocity.setY(ball.Velocity.getY() * -5);
-                    ball.Velocity.setX(ball.Velocity.getX() * -5);
-                }
-                if (zx == xd && zy == ydd) {
-                    ball.Velocity.setY(ball.Velocity.getY() * -5);
-                    ball.Velocity.setX(ball.Velocity.getX() * -5);
-                }
-                if (zx == xdd && zy == yd) {
-                    ball.Velocity.setY(ball.Velocity.getY() * -5);
-                    ball.Velocity.setX(ball.Velocity.getX() * -5);
-                }
-                if (zx > xd && zx < xdd && yd >= yc + ball.radius) {
-                    ball.Velocity.setY(ball.Velocity.getY() * -10);
-                    ball.Velocity.setX(ball.Velocity.getX());
-                }
-                if (zy > yd && zy < ydd && xd >= xc + 20) {
-                    ball.Velocity.setX(ball.Velocity.getX() * -10);
-                    ball.Velocity.setY(ball.Velocity.getY());
-                }
-                if (zx > xd && zx < xdd && ydd >= yc - 20) {
-                    ball.Velocity.setY(ball.Velocity.getY() * -10);
-                    ball.Velocity.setX(ball.Velocity.getX());
-                }
-                if (zy > yd && zy < ydd && xdd >= xc - 20) {
-                    ball.Velocity.setX(ball.Velocity.getX() * -10);
-                    ball.Velocity.setY(ball.Velocity.getY());
-                }
-                return true;
-            }
-            return false;
-        }
-    }
-
     //this method is used by the pedal classes off the player and the Ai
 //it tells where the ball is about to hit the box
     public void rectpoint(MultiballWithCollision ball, BoxWithCollision box) {
@@ -140,12 +90,20 @@ public class BoxWithCollision extends PongGame implements KeyListener {
     public double clamp(double min, double max, double value) {
         if (value <= min)
             return min;
-        else if (value >= max)
-            return max;
-        else
-            return value;
+        else return Math.min(value, max);
     }
 
+    public void Movebox() {
+        //Check for collision with another ball
+
+        //Check boundaries for the ball
+        if (location.getY() > 710)
+            location.setY(20);//up
+        else if (location.getY() < 20)
+            location.setY(710);//down
+        //update the ball's current location
+        location = location.add(velocity);
+    }
     //this draws the all the boxes in the game
     //it also have a frame for all the box
     public void DrawBox(Graphics g) {
@@ -155,7 +113,7 @@ public class BoxWithCollision extends PongGame implements KeyListener {
         drawRect(g, (int) location.getX(), (int) location.getY(), wi, hi);
     }
 
-    //this fill the all the boxes in the game
+    //this fill draw all the boxes in the game
     public void drawRect(Graphics cg, int xCenter, int yCenter, int wi, int hi) {
         cg.setColor(color);
         cg.fillRect(xCenter, yCenter, wi, hi);

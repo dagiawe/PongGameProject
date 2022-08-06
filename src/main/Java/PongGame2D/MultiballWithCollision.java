@@ -11,7 +11,7 @@ public class MultiballWithCollision {
     public Vector2D position, Velocity;
     //These variables are how much we are going to change the current X and Y per loop
     public float speed;
-
+    float save;
     public MultiballWithCollision(int x, int y, float xv, float yv, Color colorin) {
         speed = 10f;
         position = new Vector2D();
@@ -20,6 +20,16 @@ public class MultiballWithCollision {
         Velocity.set(xv, yv);
         color = colorin;
         radius = 20;
+    }
+    public void stop()
+    {
+        save = this.speed;
+       this.speed=0;
+    }
+    public void play()
+    {
+        this.position.setX(470);
+        this.speed=save;
     }
 
     public void MoveBall(ArrayList<MultiballWithCollision> balls) {
@@ -60,10 +70,7 @@ public class MultiballWithCollision {
         float sumRadius = radius + ball.radius;
         float sqrRadius = sumRadius * sumRadius;
         float distSqr = (xd * xd) + (yd * yd);
-        if (distSqr <= sqrRadius) {
-            return true;
-        }
-        return false;
+        return distSqr <= sqrRadius;
     }
 
     //What happens if they collide
@@ -76,7 +83,7 @@ public class MultiballWithCollision {
         // resolve intersection --
         // inverse mass quantities
         float im1 = 1 / 1; //If the balls have different masses you can use this
-        float im2 = 1 / 1; //my balls however all have the same mass
+        float im2 = 1/ 1; //however, my balls  have the same mass
         // push-pull them apart based off their mass
         position = position.add(mtd.multiply(im1 / (im1 + im2)));
         ball.position = ball.position.subtract(mtd.multiply(im2 / (im1 + im2)));
@@ -92,7 +99,7 @@ public class MultiballWithCollision {
         this.Velocity = this.Velocity.add(impulse.multiply(im1));
         ball.Velocity = ball.Velocity.subtract(impulse.multiply(im2));
     }
-    /**
+    /*
      * @param cg = graphics that you are using
      * @param xCenter = X Position
      * @param yCenter = Y Position
@@ -138,7 +145,7 @@ class Vector2D {
 
     //Specialty method used during calculations of ball to ball collisions.
     public float dot(Vector2D v2) {
-        float result = 0.0f;
+        float result;
         result = this.getX() * v2.getX() + this.getY() * v2.getY();
         return result;
     }
